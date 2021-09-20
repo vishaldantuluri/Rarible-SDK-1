@@ -156,15 +156,20 @@ const Dashboard: React.FC<DashboardProps> = ({ provider, sdk, accounts }) => {
 				setOrder(resultOrder)
 				setPurchaseOrderForm({ ...purchaseOrderForm, hash: resultOrder.hash })
 			}
+			console.log(resultOrder);
 		}
 	}
 
 	/**
 	 * Buy order
 	 */
-	const handlePurchaseOrder = async () => {
-		if (order) {
-			await sdk.order.fill(order, { amount: parseInt(purchaseOrderForm.amount) }).then(a => a.build().runAll())
+	 const handlePurchaseOrder = async () => {
+		const id = await sdk.apis.order.getOrderByHash({ 
+			hash: purchaseOrderForm.hash.toString(),
+		})
+		console.log(id);
+		if (id) {
+			await sdk.order.fill(id, { amount: parseInt(purchaseOrderForm.amount) }).then(a => a.build().runAll())
 		}
 	}
 
@@ -243,7 +248,7 @@ const Dashboard: React.FC<DashboardProps> = ({ provider, sdk, accounts }) => {
 			</div>
 
 			<div style={{ padding: '4px' }}>
-				<p>Create sell order form</p>
+				<p>Create sell orders form</p>
 				<input onChange={handleChangeOrderContract} value={createOrderForm?.contract}
 							 placeholder={"Contract address"}/>
 				<input onChange={handleChangeOrderTokenId} value={createOrderForm?.tokenId} placeholder={"Token Id"}/>
